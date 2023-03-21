@@ -9,14 +9,15 @@ bool Disk::rayIntersectShape(Ray &ray, int *primID, float *u, float *v) const {
     //* 5.更新ray的tFar,减少光线和其他物体的相交计算次数
     //* Write your code here.
     Ray invRay = transform.inverseRay(ray);
-
     if(fabs(invRay.direction[2]) < 1e-4f) return false;
-    float t = (.0f - invRay.origin[2]) / invRay.direction[2];
 
+    float t = (.0f - invRay.origin[2]) / invRay.direction[2];
     if(t < invRay.tNear || t > invRay.tFar) return false;
+
     Point3f ins = invRay.at(t);
     float dis = sqrt(ins[0] * ins[0] + ins[1] * ins[1]);
     if(dis < innerRadius || dis > radius) return false;
+
     float phi = atan2(ins[1], ins[0]);
     if(phi < 0) phi += 2.0 * PI;
     if(phi > phiMax) return false;
