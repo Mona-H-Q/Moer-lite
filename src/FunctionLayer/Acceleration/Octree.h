@@ -9,7 +9,9 @@ public:
 protected:
   struct OctreeNode;
     static constexpr int ocLeafMaxSize = 64;
-    OctreeNode *
+    std::shared_ptr<Octree::OctreeNode>
   recursiveBuild(const AABB &aabb, const std::vector<int> &primIdxBuffer);
-  OctreeNode * root;
+  std::shared_ptr<Octree::OctreeNode> root;
+  void Query(std::shared_ptr<OctreeNode> now, Ray &ray, 
+              int *geomID, int *primID, float *u, float *v) const;
 };
