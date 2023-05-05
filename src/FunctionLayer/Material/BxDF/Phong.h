@@ -5,10 +5,9 @@
 class PhongReflection : public BSDF {
 public:
   PhongReflection(const Vector3f &_normal, const Vector3f &_tangent,
-                  const Vector3f &_bitangent, Spectrum _albedo, float _kd,
-                  float _ks, float _p)
-      : BSDF(_normal, _tangent, _bitangent), albedo(_albedo), kd(_kd), ks(_ks),
-        p(_p), specularReflectance(1.f) {}
+                  const Vector3f &_bitangent, Spectrum _kd, Spectrum _ks,
+                  float _p)
+      : BSDF(_normal, _tangent, _bitangent), kd(_kd), ks(_ks), p(_p) {}
 
   virtual Spectrum f(const Vector3f &wo, const Vector3f &wi) const override {
     // TODO
@@ -25,15 +24,15 @@ public:
     Vector3f l_r(-l[0], l[1], -l[2]);
     Vector3f v = normalize(toLocal(wo));
 
-    diffuse = kd * max(dot(n, l), 0.f);
-    specular = ks * pow(max(dot(v, l_r), 0.f), p);
+    diffuse = kd * std::max(dot(n, l), 0.f);
+    specular = ks * pow(std::max(dot(v, l_r), 0.f), p);
 
     return diffuse + specular;
   }
 
   float pdf(const Vector3f &wo, const Vector3f &wi) const {
     Vector3f woLocal = toLocal(wo), wiLocal = toLocal(wi);
-    return ks + kd * squareToCosineHemispherePdf(wiLocal);
+    return squareToCosineHemispherePdf(wiLocal);
   }
 
   virtual BSDFSampleResult sample(const Vector3f &wo,
@@ -46,9 +45,7 @@ public:
   }
 
 private:
-  Spectrum albedo;
-  Spectrum specularReflectance; // 假设Phong模型高光仅是白光
-  float kd;                     // 漫反射系数
-  float ks;                     // 高光（镜面反射）系数
-  float p;                      // 高光衰减系数
+  Spectrum kd; // 漫反射系数
+  Spectrum ks; // 高光（镜面反射）系数
+  float p;     // 高光衰减系数
 };
